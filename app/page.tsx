@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./page.module.scss";
 import Image from "next/image";
 import Lenis from "@studio-freight/lenis";
-import { useScroll, useTransform, motion } from "framer-motion";
+import { useTransform, useScroll, motion } from "framer-motion";
 
 const images = [
   "1.jpg",
@@ -29,7 +29,6 @@ export default function Home() {
     offset: ["start end", "end start"],
   });
   const { height } = dimension;
-
   const y = useTransform(scrollYProgress, [0, 1], [0, height * 2]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, height * 3.3]);
   const y3 = useTransform(scrollYProgress, [0, 1], [0, height * 1.25]);
@@ -44,23 +43,18 @@ export default function Home() {
     };
 
     const handleResize = () => {
-      setDimension({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    const handleVisibilityChange = () => {
-      setTimeout(handleResize, 300); // 주소창 사라짐에 대응
+      setDimension({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     };
 
     window.addEventListener("resize", handleResize);
-    window.addEventListener("visibilitychange", handleVisibilityChange);
-
-    handleResize(); // 초기 사이즈 설정
-
     requestAnimationFrame(raf);
+    handleResize(); // 초기 사이즈 설정
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
@@ -78,14 +72,16 @@ export default function Home() {
   );
 }
 
-const Column = ({ images, y }: { images: string[]; y: any }) => {
+const Column = ({ images, y }: any) => {
   return (
     <motion.div className={styles.column} style={{ y }}>
-      {images.map((src, i) => (
-        <div key={i} className={styles.imageContainer}>
-          <Image src={`/images/${src}`} alt="image" fill />
-        </div>
-      ))}
+      {images.map((src: string, i: number) => {
+        return (
+          <div key={i} className={styles.imageContainer}>
+            <Image src={`/images/${src}`} alt="image" fill />
+          </div>
+        );
+      })}
     </motion.div>
   );
 };
